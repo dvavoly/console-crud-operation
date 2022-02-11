@@ -6,21 +6,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import com.example.modev.Skill;
+import com.example.modev.Status;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-
-/*
-	public Skill save(Skill s) //id=null, name = TEST - completed
-	public Skill update(Skill s)//
-	public Skill getById(Integer id)..
-	public List<Skill> getAll()...
-	public void deleteById(Integer id)
-*/
 
 public class SkillRepository {
 
@@ -29,14 +24,59 @@ public class SkillRepository {
 
     public Skill save(Skill s) {
         List<Skill> skills = readSkillFromFile();
-        s = setUniqueId(skills, s);
+        s.setId(generateNewMaxId(skills));
         skills.add(s);
         writeSkillToFile(skills);
         return s;
     }
 
+    public Skill update(Skill s) {
+        List<Skill> skills = readSkillFromFile();
+        for (Skill item : skills) {
+            if (Objects.equals(item.getId(), s.getId())) {
+                item.setName(s.getName());
+                return item;
+            }
+        }
+        writeSkillToFile(skills);
+        return new Skill("", -1);
+    }
+
+    /**
+     * @param id - An id of the searching element.
+     * @return a new object with id = -1 and an empty string in a field name
+     */
+    public Skill getById(Integer id) {
+        List<Skill> skills = readSkillFromFile();
+        for (Skill item : skills) {
+            if (Objects.equals(item.getId(), id)) {
+                return item;
+            }
+        }
+        return new Skill("", -1);
+    }
+
+    /**
+     * @return - All elements stored in a file
+     */
     public List<Skill> getAll() {
         return readSkillFromFile();
+    }
+
+    public void deleteById(Integer id) {
+        List<Skill> skills = readSkillFromFile();
+        for (Skill item : skills) {
+            if (Objects.equals(item.getId(), id)) {
+                item.setStatus(Status.DELETED);
+                break;
+            }
+        }
+        writeSkillToFile(skills);
+    }
+
+    private Integer generateNewMaxId(List<Skill> skills) {
+        Skill skillWithMaxId = skills.stream().max(Comparator.comparing(Skill::getId)).orElse(null);
+        return Objects.nonNull(skillWithMaxId) ? skillWithMaxId.getId() + 1 : 1;
     }
 
     private static List<Skill> readSkillFromFile() {
@@ -49,7 +89,7 @@ public class SkillRepository {
                 e.printStackTrace();
             }
         } else {
-            return new ArrayList<Skill>();
+            return new ArrayList<>();
         }
         return outList;
     }
@@ -60,20 +100,5 @@ public class SkillRepository {
         } catch (JsonIOException | IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private Skill setUniqueId(List<Skill> skills, Skill s) {
-
-        if (skills.isEmpty()) {
-            s.setId(1);
-            return s;
-        }
-
-        // get a last element of an array
-        Skill lastElement = skills.get(skills.size() - 1);
-        // generate new is by add plus one to id of the last element
-        int newId = lastElement.getId() + 1;
-        s.setId(newId);
-        return s;
     }
 }
