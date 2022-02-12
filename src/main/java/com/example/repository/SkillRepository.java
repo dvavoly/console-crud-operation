@@ -3,6 +3,7 @@ package com.example.repository;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -82,7 +83,7 @@ public class SkillRepository {
     private static List<Skill> readSkillFromFile() {
         List<Skill> outList = null;
         if (Files.exists(Path.of(fileName))) {
-            try (FileReader reader = new FileReader(fileName)) {
+            try (FileReader reader = new FileReader(fileName, StandardCharsets.UTF_8)) {
                 outList = gson.fromJson(reader, new TypeToken<List<Skill>>() {
                 }.getType());
             } catch (JsonIOException | JsonSyntaxException | IOException e) {
@@ -95,7 +96,7 @@ public class SkillRepository {
     }
 
     private static void writeSkillToFile(List<Skill> skills) {
-        try (FileWriter writer = new FileWriter(fileName)) {
+        try (FileWriter writer = new FileWriter(fileName, StandardCharsets.UTF_8)) {
             gson.toJson(skills, writer);
         } catch (JsonIOException | IOException e) {
             e.printStackTrace();

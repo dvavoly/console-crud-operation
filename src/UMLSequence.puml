@@ -1,0 +1,22 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+DeveloperController -> DeveloperView: Greetings
+DeveloperView -> Console: Show Greetings
+
+Console --> DeveloperController: return user input
+DeveloperController -> SkillController: ask about create a new skill
+
+SkillController -> SkillView: create a new skills
+Console <-- SkillView: create the skills
+Console -> SkillController: return user input
+
+SkillController -> DeveloperController: return control
+DeveloperController -> DeveloperView: user choice
+DeveloperView -> Console
+DeveloperController <-- Console: return user input
+DeveloperController -> SpecialtyController: add a new specialty
+
+@enduml
