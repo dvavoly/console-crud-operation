@@ -1,4 +1,4 @@
-package com.example.modev;
+package com.example.model;
 
 import java.util.List;
 

@@ -1,18 +1,22 @@
 package com.example.view;
 
+import com.example.utils.Messages;
+
+import java.util.Scanner;
+
 public class DeveloperView {
 
-    public void startUserInterface() {
-        System.out.println("""
-                Hello,
-                In this program, you can create a Developer with skills and specialty.
-                Let's get started!
-                To add a new developer - type 1
-                To add a new skills - type 2
-                To add a specialty - type 3
-                """);
-//                First, you need to create a list of skills.
-//                Input a skill one per line, for exit type quit
-//                """);
+    SkillView skillView;
+
+    public DeveloperView() {
+        skillView = new SkillView();
+    }
+
+    public void createDeveloper(Scanner scanner) {
+        System.out.print(Messages.ENTER_DEVELOPER_FIRSTNAME);
+        String firstName = scanner.nextLine();
+        System.out.println(Messages.ENTER_DEVELOPER_LASTNAME);
+        String lastName = scanner.nextLine();
+        skillView.createSkill(scanner);
     }
 }

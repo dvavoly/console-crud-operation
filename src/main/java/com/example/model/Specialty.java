@@ -1,4 +1,4 @@
-package com.example.modev;
+package com.example.model;
 
 public class Specialty {
     private Integer id;

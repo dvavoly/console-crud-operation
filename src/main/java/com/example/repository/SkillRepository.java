@@ -11,8 +11,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-import com.example.modev.Skill;
-import com.example.modev.Status;
+import com.example.model.Skill;
+import com.example.model.Status;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
