@@ -23,6 +23,13 @@ public class SkillRepository {
     private static final Gson gson = new Gson();
     private static final String fileName = "src/main/resources/skills.json";
 
+    /**
+     * Add an item to a list of skills and save to a file.
+     * If id was null than generate a new id by increment max id of existed item.
+     *
+     * @param s - item to be saved
+     * @return - saved element
+     */
     public Skill save(Skill s) {
         List<Skill> skills = readSkillFromFile();
         s.setId(generateNewMaxId(skills));
@@ -44,6 +51,7 @@ public class SkillRepository {
     }
 
     /**
+     * Return the item
      * @param id - An id of the searching element.
      * @return a new object with id = -1 and an empty string in a field name
      */
@@ -58,7 +66,8 @@ public class SkillRepository {
     }
 
     /**
-     * @return - All elements stored in a file
+     * Return all item stored in a file
+     * @return - list if item
      */
     public List<Skill> getAll() {
         return readSkillFromFile();
