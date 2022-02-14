@@ -6,18 +6,15 @@ package com.example.model;
 public class Skill {
     private Integer id;
     private String name;
-    private Status status;
 
     public Skill(String name) {
         this.name = name;
         id = null;
-        status = Status.ACTIVE;
     }
 
     public Skill(String name, Integer id) {
         this.name = name;
         this.id = id;
-        status = Status.ACTIVE;
     }
 
     public String getName() {
@@ -34,14 +31,6 @@ public class Skill {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
     @Override

@@ -6,17 +6,17 @@ import java.util.Scanner;
 
 public class DeveloperView {
 
-    SkillView skillView;
-
-    public DeveloperView() {
-        skillView = new SkillView();
-    }
+    private final SkillView skillView = new SkillView();
+    private final SpecialtyView specialtyView = new SpecialtyView();
 
     public void createDeveloper(Scanner scanner) {
-        System.out.print(Messages.ENTER_DEVELOPER_FIRSTNAME);
-        String firstName = scanner.nextLine();
+        System.out.println(Messages.ENTER_DEVELOPER_FIRSTNAME);
+        String firstName = scanner.nextLine(); // FIXME don't work first input from scanner
+        firstName = scanner.nextLine();
         System.out.println(Messages.ENTER_DEVELOPER_LASTNAME);
         String lastName = scanner.nextLine();
-        skillView.createSkill(scanner);
+        String stringContainsSkillsId = skillView.createSkill(scanner);
+        String specialty = specialtyView.createSpecialty();
+
     }
 }
