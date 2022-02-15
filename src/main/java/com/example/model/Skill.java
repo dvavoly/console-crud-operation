@@ -1,9 +1,6 @@
 package com.example.model;
 
-/**
- * Class Skill contains information about Developer skills
- */
-public class Skill {
+public class Skill implements Entity {
     private Integer id;
     private String name;
 

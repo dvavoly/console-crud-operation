@@ -3,11 +3,13 @@ package com.example.model;
 import java.util.List;
 
 public class Developer {
+
     private Integer id;
-    private String firstName;
-    private String secondName;
     private List<Skill> skills;
     private Specialty specialty;
+    private Status status;
+    private String firstName;
+    private String secondName;
 
     public Developer(Integer id, String firstName, String secondName, List<Skill> skills, Specialty specialty) {
         this.id = id;
@@ -15,6 +17,7 @@ public class Developer {
         this.secondName = secondName;
         this.skills = skills;
         this.specialty = specialty;
+        this.status = Status.ACTIVE;
     }
 
     public Integer getId() {
@@ -45,6 +48,14 @@ public class Developer {
         return skills;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     public void setSkills(List<Skill> skills) {
         this.skills = skills;
     }
@@ -55,5 +66,15 @@ public class Developer {
 
     public void setSpecialty(Specialty specialty) {
         this.specialty = specialty;
+    }
+
+    @Override
+    public String toString() {
+        return "Developer{" +
+                "firstName='" + firstName + '\'' +
+                ", secondName='" + secondName + '\'' +
+                ", skills=" + skills +
+                ", specialty=" + specialty +
+                '}';
     }
 }

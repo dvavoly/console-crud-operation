@@ -1,20 +1,17 @@
 package com.example.model;
 
-public class Specialty {
+public class Specialty implements Entity{
     private Integer id;
     private String name;
-    private Status status;
 
     public Specialty(Integer id, String name) {
         this.id = id;
         this.name = name;
-        this.status = Status.ACTIVE;
     }
 
     public Specialty(String name) {
         this.id = null;
         this.name = name;
-        this.status = Status.ACTIVE;
     }
 
     public Integer getId() {
@@ -33,11 +30,8 @@ public class Specialty {
         this.name = name;
     }
 
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
+    @Override
+    public String toString() {
+        return "Specialty : " + name + ", id: " + id;
     }
 }
