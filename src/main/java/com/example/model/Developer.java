@@ -11,10 +11,10 @@ public class Developer {
     private String firstName;
     private String secondName;
 
-    public Developer(Integer id, String firstName, String secondName, List<Skill> skills, Specialty specialty) {
-        this.id = id;
+    public Developer(String firstName, String lastName, List<Skill> skills, Specialty specialty) {
+        this.id = null;
         this.firstName = firstName;
-        this.secondName = secondName;
+        this.secondName = lastName;
         this.skills = skills;
         this.specialty = specialty;
         this.status = Status.ACTIVE;
@@ -70,11 +70,6 @@ public class Developer {
 
     @Override
     public String toString() {
-        return "Developer{" +
-                "firstName='" + firstName + '\'' +
-                ", secondName='" + secondName + '\'' +
-                ", skills=" + skills +
-                ", specialty=" + specialty +
-                '}';
+        return firstName + " " + secondName + ", Skill: " + skills + ", Specialty: " + specialty;
     }
 }

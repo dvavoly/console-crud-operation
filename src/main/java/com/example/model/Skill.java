@@ -32,6 +32,6 @@ public class Skill implements Entity {
 
     @Override
     public String toString() {
-        return "Skill: " + name + ", id: " + id;
+        return name;
     }
 }

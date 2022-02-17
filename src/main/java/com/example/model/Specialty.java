@@ -32,6 +32,6 @@ public class Specialty implements Entity{
 
     @Override
     public String toString() {
-        return "Specialty : " + name + ", id: " + id;
+        return name;
     }
 }

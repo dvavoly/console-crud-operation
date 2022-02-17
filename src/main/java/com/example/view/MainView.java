@@ -17,7 +17,7 @@ public class MainView {
         try (var scanner = new Scanner(System.in)) {
             switch (scanner.nextInt()) {
                 case 1 -> developer.createDeveloper(scanner);
-                case 2 -> System.out.println("2");
+                case 2 -> developer.listAllDevelopers();
                 default -> System.out.println(Messages.BAD_INPUT);
             }
         } catch (InputMismatchException e) {
