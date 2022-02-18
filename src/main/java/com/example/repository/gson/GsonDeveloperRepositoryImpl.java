@@ -58,11 +58,13 @@ public class GsonDeveloperRepositoryImpl implements DeveloperRepository {
 
     @Override
     public void deleteById(Integer id) {
-        for (Developer item : readFromFile(fileName)) {
+        List<Developer> developers = readFromFile(fileName);
+        for (Developer item : developers) {
             if (item.getId().equals(id)) {
                 item.setStatus(Status.DELETED);
             }
         }
+        writeToFile(developers, fileName);
     }
 
     public static Integer generateNewMaxId(List<Developer> list) {

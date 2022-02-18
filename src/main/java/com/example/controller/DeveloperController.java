@@ -9,7 +9,7 @@ import java.util.List;
 
 public class DeveloperController {
 
-    private static final DeveloperRepository developerRepository = new GsonDeveloperRepositoryImpl();
+    private final DeveloperRepository developerRepository = new GsonDeveloperRepositoryImpl();
 
     public Developer saveDeveloper(Developer developer) {
         return developerRepository.save(developer);
@@ -19,5 +19,9 @@ public class DeveloperController {
         return developerRepository.getAll().stream()
                 .filter(e -> e.getStatus().equals(Status.ACTIVE))
                 .toList();
+    }
+
+    public void removeDeveloper(Integer id) {
+        developerRepository.deleteById(id);
     }
 }
