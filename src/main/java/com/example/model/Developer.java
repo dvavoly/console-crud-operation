@@ -40,7 +40,7 @@ public class Developer {
         return secondName;
     }
 
-    public void setSecondName(String secondName) {
+    public void setLastName(String secondName) {
         this.secondName = secondName;
     }
 

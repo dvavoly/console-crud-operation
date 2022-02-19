@@ -3,10 +3,12 @@ package com.example.utils;
 public enum Messages {
     GREETINGS("Hello,\nIn this program, you can create or view a Developer with skills and specialty."),
     MAINMENU("""
+            
             Choose an option:
             1:Create a new Developer?
             2:Display available Developers?
-            3:Delete/Update a developer?
+            3:Update a developer?
+            4:Delete a developer?
             0:Exit.
             Select an option:"""),
     BAD_INPUT("Bad input."),

@@ -46,10 +46,9 @@ public class GsonDeveloperRepositoryImpl implements DeveloperRepository {
     @Override
     public Developer update(Developer dev) {
         List<Developer> developers = readFromFile(fileName);
-        for (int i = 0; i < developers.size() - 1; i++) {
-            if (Objects.equals(developers.get(i), dev.getId())) {
+        for (int i = 0; i < developers.size(); i++) {
+            if (developers.get(i).getId().equals(dev.getId())) {
                 developers.set(i, dev);
-                break;
             }
         }
         writeToFile(developers, fileName);

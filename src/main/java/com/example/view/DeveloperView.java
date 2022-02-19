@@ -36,26 +36,56 @@ public class DeveloperView {
         }
     }
 
-    public void updateOrDeleteDevelopers(Scanner scanner) {
+    public void updateDeveloper(Scanner scanner) {
         List<Developer> developers = controller.getAllDevelopers();
         if (developers.isEmpty()) {
             System.out.println(Messages.LIST_OF_DEVELOPERS_IS_EMPTY);
         } else {
-            System.out.println("Choose an option:\n1:Delete\n2:Update");
-            int inputFromUser = scanner.nextInt();
-
             developers.forEach(d -> System.out.println(d.getId() + ":" + d));
+            System.out.println("Which developer update?");
+            Developer developer = controller.getDeveloper(scanner.nextInt());
+            System.out.println(developer);
+            System.out.println("You want update:\n1:First and Last Name?\n2:Skills?\n3:Specialty\n0:Do nothing");
 
-            if (inputFromUser == 1) {
-                System.out.println("Which developer to remove?");
-                controller.removeDeveloper(scanner.nextInt());
-                System.out.println("Developer successfully removed");
+            switch (scanner.nextInt()) {
+                case 1 -> {
+                    System.out.print("Input First name: ");
+                    scanner.nextLine(); // FIXME first input from scanner do not work
+                    String firstName = scanner.nextLine();
+                    System.out.print("Input Last name: ");
+                    String lastName = scanner.nextLine();
+                    System.out.println(controller.updateFirstAndLastName(developer, firstName, lastName));
+                }
+                case 2 -> {
+                    System.out.println("Update Skills");
+                    scanner.nextLine();
+                    List<Skill> skills = skillView.createSkill(scanner);
+                    controller.updateSkills(developer, skills);
+                }
+                case 3 -> {
+                    System.out.println("Update Specialty");
+                    scanner.nextLine();
+                    Specialty specialty = specialtyView.createSpecialty(scanner);
+                    controller.updateSpecialty(developer, specialty);
+                }
+                case 4 -> {
+                    return;
+                }
+                default -> System.out.println(Messages.BAD_INPUT);
             }
+        }
+        System.out.println("Developer successfully updated");
+    }
 
-            if (inputFromUser == 2) {
-                System.out.println("Which developer update?");
-                System.out.println("Developer successfully updated");
-            }
+    public void deleteDeveloper(Scanner scanner) {
+        List<Developer> developers = controller.getAllDevelopers();
+        if (developers.isEmpty()) {
+            System.out.println(Messages.LIST_OF_DEVELOPERS_IS_EMPTY);
+        } else {
+            developers.forEach(d -> System.out.println(d.getId() + ":" + d));
+            System.out.println("Which developer to remove?");
+            controller.removeDeveloper(scanner.nextInt());
+            System.out.println("Developer successfully removed");
         }
     }
 }

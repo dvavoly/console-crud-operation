@@ -19,7 +19,8 @@ public class MainView {
                     case 0 -> showMenu = false; // exit from loop and program
                     case 1 -> developer.createDeveloper(scanner);
                     case 2 -> developer.listAllDevelopers();
-                    case 3 -> developer.updateOrDeleteDevelopers(scanner);
+                    case 3 -> developer.updateDeveloper(scanner);
+                    case 4 -> developer.deleteDeveloper(scanner);
                     default -> System.out.println(Messages.BAD_INPUT);
                 }
             }
