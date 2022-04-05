@@ -1,11 +1,5 @@
 package com.example.utils;
 
-import com.example.model.Entity;
-import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,8 +10,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import com.example.model.Entity;
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 public class utils {
 

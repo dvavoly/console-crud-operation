@@ -1,14 +1,5 @@
 package com.example.repository.gson;
 
-import com.example.model.Skill;
-import com.example.model.Specialty;
-import com.example.repository.SpecialtyRepository;
-import com.example.utils.utils;
-import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,6 +10,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+
+import com.example.model.Specialty;
+import com.example.repository.SpecialtyRepository;
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 public class GsonSpecialtyRepositoryImpl implements SpecialtyRepository {
 

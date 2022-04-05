@@ -1,14 +1,13 @@
 package com.example.view;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Scanner;
+
 import com.example.controller.SkillController;
 import com.example.model.Skill;
 import com.example.utils.Messages;
 import com.example.utils.utils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
 
 public class SkillView {
 
@@ -29,7 +28,7 @@ public class SkillView {
         controller.printItemsWithIndex(controller.getAllSkills())
                 .forEach(System.out::println);
         System.out.println("Which one do you want to add?\nEnter numbers separated by spaces:");
-        String listOfAllSkills = scanner.nextLine(); //FIXME add input validation
+        String listOfAllSkills = scanner.nextLine(); // FIXME add input validation
         if (utils.isStringContainsOnlyNumbers(listOfAllSkills)) {
             return SkillController.createListOfSkillFromStringOfId(listOfAllSkills);
         }

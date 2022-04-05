@@ -1,11 +1,10 @@
 package com.example.controller;
 
+import java.util.List;
+
 import com.example.model.Specialty;
 import com.example.repository.SpecialtyRepository;
 import com.example.repository.gson.GsonSpecialtyRepositoryImpl;
-
-import java.util.List;
-import java.util.stream.IntStream;
 
 public class SpecialtyController {
 
