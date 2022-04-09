@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-developer-specialty-table
+      author: Yevhen Danylov
+      changes:
+        - createTable:
+            tableName: developer_specialty
+            columns:
+              - column:
+                  name: developer_id
+                  type: int
+                  constraints:
+                    nullable: true
+              - column:
+                  name: specialty_id
+                  type: int
+                  constraints:
+                    nullable: true

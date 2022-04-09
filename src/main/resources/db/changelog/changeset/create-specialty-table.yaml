@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-skill-table
+      author: Yevhen Danylov
+      changes:
+        - createTable:
+            tableName: specialty
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    nullable: true
+                    primaryKey: true
+              - column:
+                  name: specialty_name
+                  type: varchar(200)
+                  constraints:
+                    nullable: true

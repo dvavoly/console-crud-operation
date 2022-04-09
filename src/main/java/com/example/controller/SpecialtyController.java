@@ -1,14 +1,15 @@
 package com.example.controller;
 
-import java.util.List;
-
 import com.example.model.Specialty;
 import com.example.repository.SpecialtyRepository;
-import com.example.repository.gson.GsonSpecialtyRepositoryImpl;
+import com.example.repository.jdbc.JdbcSpecialtyRepositoryImpl;
+
+import java.util.List;
 
 public class SpecialtyController {
 
-    private static final SpecialtyRepository controller = new GsonSpecialtyRepositoryImpl();
+    //    private static final SpecialtyRepository controller = new GsonSpecialtyRepositoryImpl();
+    private static final SpecialtyRepository controller = new JdbcSpecialtyRepositoryImpl();
 
     public List<String> printItemsWithIndex(List<Specialty> items) {
         return items.stream().map(e -> e.getId() + ":" + e.getName()).toList();
@@ -25,4 +26,5 @@ public class SpecialtyController {
     public Specialty getById(Integer id) {
         return controller.getById(id);
     }
+
 }

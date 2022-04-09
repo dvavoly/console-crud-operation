@@ -1,2 +1,5 @@
 /.idea/
+/.vscode/
+/logs/
+/pgdata/
 /target/

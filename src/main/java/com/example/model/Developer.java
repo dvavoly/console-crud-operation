@@ -5,19 +5,29 @@ import java.util.List;
 public class Developer {
 
     private Integer id;
+    private String firstName;
+    private String lastName;
     private List<Skill> skills;
     private Specialty specialty;
     private Status status;
-    private String firstName;
-    private String secondName;
 
     public Developer(String firstName, String lastName, List<Skill> skills, Specialty specialty) {
         this.id = null;
         this.firstName = firstName;
-        this.secondName = lastName;
+        this.lastName = lastName;
         this.skills = skills;
         this.specialty = specialty;
         this.status = Status.ACTIVE;
+    }
+
+    public static Developer of() {
+        return new Developer("", "", List.of(), new Specialty("Empty"));
+    }
+
+    public static Developer of(int id, String firstName, String lastName, String specialty_name) {
+        var output = new Developer(firstName, lastName, List.of(), new Specialty(specialty_name));
+        output.setId(id);
+        return output;
     }
 
     public Integer getId() {
@@ -36,12 +46,12 @@ public class Developer {
         this.firstName = firstName;
     }
 
-    public String getSecondName() {
-        return secondName;
+    public String getLastName() {
+        return lastName;
     }
 
     public void setLastName(String secondName) {
-        this.secondName = secondName;
+        this.lastName = secondName;
     }
 
     public List<Skill> getSkills() {
@@ -70,6 +80,6 @@ public class Developer {
 
     @Override
     public String toString() {
-        return firstName + " " + secondName + ", Skill: " + skills + ", Specialty: " + specialty;
+        return firstName + " " + lastName + ", Skill: " + skills + ", Specialty: " + specialty;
     }
 }

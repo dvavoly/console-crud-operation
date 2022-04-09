@@ -66,7 +66,7 @@ public class GsonDeveloperRepositoryImpl implements DeveloperRepository {
         writeToFile(developers, fileName);
     }
 
-    public static Integer generateNewMaxId(List<Developer> list) {
+    private static Integer generateNewMaxId(List<Developer> list) {
         Developer developerWithMaxId = list.stream().max(Comparator.comparing(Developer::getId)).orElse(null);
         return Objects.nonNull(developerWithMaxId) ? developerWithMaxId.getId() + 1 : 1;
     }

@@ -2,14 +2,15 @@ package com.example.controller;
 
 import com.example.model.Skill;
 import com.example.repository.SkillRepository;
-import com.example.repository.gson.GsonSkillRepositoryImpl;
+import com.example.repository.jdbc.JdbcSkillRepositoryImpl;
 
 import java.util.List;
 import java.util.stream.Stream;
 
 public class SkillController {
 
-    private static final SkillRepository skillRepository = new GsonSkillRepositoryImpl();
+    //    private static final SkillRepository skillRepository = new GsonSkillRepositoryImpl();
+    private static final SkillRepository skillRepository = new JdbcSkillRepositoryImpl();
 
     public Skill saveSkill(String name) {
         return skillRepository.save(new Skill(name));

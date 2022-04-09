@@ -5,13 +5,14 @@ import com.example.model.Skill;
 import com.example.model.Specialty;
 import com.example.model.Status;
 import com.example.repository.DeveloperRepository;
-import com.example.repository.gson.GsonDeveloperRepositoryImpl;
+import com.example.repository.jdbc.JdbcDeveloperRepositoryImpl;
 
 import java.util.List;
 
 public class DeveloperController {
 
-    private final DeveloperRepository developerRepository = new GsonDeveloperRepositoryImpl();
+    //      private final DeveloperRepository developerRepository = new GsonDeveloperRepositoryImpl();
+    private final DeveloperRepository developerRepository = new JdbcDeveloperRepositoryImpl();
 
     public Developer saveDeveloper(Developer developer) {
         return developerRepository.save(developer);
