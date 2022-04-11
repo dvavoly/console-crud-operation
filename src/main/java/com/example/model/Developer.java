@@ -30,6 +30,13 @@ public class Developer {
         return output;
     }
 
+    public static Developer of(int id, String firstName, String lastName, String specialty_name, Status status) {
+        var output = new Developer(firstName, lastName, List.of(), new Specialty(specialty_name));
+        output.setId(id);
+        output.setStatus(status);
+        return output;
+    }
+
     public Integer getId() {
         return id;
     }

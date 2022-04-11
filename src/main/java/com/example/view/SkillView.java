@@ -22,8 +22,7 @@ public class SkillView {
                 addAndSaveNewSkills(scanner);
             } else {
                 System.out.println("Find some skills:");
-                controller.printItemsWithIndex(controller.getAllSkills())
-                        .forEach(System.out::println);
+                controller.getAllSkills().forEach(System.out::println);
             }
             System.out.println("Add other ones or choose ?\n 1 add\n 2 choose\ntype a number");
             int inputFromUser = scanner.nextInt();
@@ -35,7 +34,7 @@ public class SkillView {
                     .forEach(System.out::println);
             System.out.println("Which one do you want to add?\nEnter numbers separated by spaces:");
             String listOfAllSkills = scanner.nextLine(); // FIXME add input validation
-            listOfAllSkills = scanner.nextLine();
+//            listOfAllSkills = scanner.nextLine();
             if (utils.isStringContainsOnlyNumbers(listOfAllSkills)) {
                 result = SkillController.createListOfSkillFromStringOfId(listOfAllSkills);
             }

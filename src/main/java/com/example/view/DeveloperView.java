@@ -21,8 +21,8 @@ public class DeveloperView {
         firstName = scanner.nextLine();
         System.out.print(Messages.ENTER_DEVELOPER_LASTNAME);
         String lastName = scanner.nextLine();
-        List<Skill> skills = skillView.createSkill(scanner);
         Specialty specialty = specialtyView.createSpecialty(scanner);
+        List<Skill> skills = skillView.createSkill(scanner);
         Developer newDeveloper = new Developer(firstName, lastName, skills, specialty);
         System.out.println(controller.saveDeveloper(newDeveloper));
     }

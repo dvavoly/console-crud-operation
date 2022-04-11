@@ -3,12 +3,14 @@ package com.example.repository.jdbc;
 import com.example.model.Developer;
 import com.example.model.Skill;
 import com.example.model.Specialty;
+import com.example.model.Status;
 import com.example.repository.DeveloperRepository;
 import com.example.utils.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,28 +27,38 @@ public class JdbcDeveloperRepositoryImpl implements DeveloperRepository {
         }
 
         Developer result = Developer.of();
-        String queryDeveloper = "SELECT id, first_name, last_name FROM developer WHERE developer.id = " + id;
-        String querySkills = "";
-        String querySpecialty = "";
+        String queryDeveloper = "SELECT id, first_name, last_name FROM developer WHERE developer.id = ";
+        String querySkills = """
+                SELECT skill_id, skill_name
+                FROM developer_skill
+                JOIN skill s on developer_skill.skill_id = s.id
+                WHERE developer_id =
+                """;
+        String querySpecialty = """
+                SELECT specialty_id, specialty_name
+                FROM specialty
+                JOIN developer_specialty ds on specialty.id = ds.specialty_id
+                WHERE developer_id =
+                """;
 
         try (var statement = factory.getConnection().createStatement(
                 ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
-            ResultSet resultSet = statement.executeQuery(queryDeveloper);
+            ResultSet resultSet = statement.executeQuery(queryDeveloper + id);
             if (resultSet.first()) {
                 result.setId(resultSet.getInt("id"));
                 result.setFirstName(resultSet.getString("first_name"));
                 result.setLastName(resultSet.getString("last_name"));
             }
-            resultSet = statement.executeQuery(querySkills);
+            resultSet = statement.executeQuery(querySkills + id);
             List<Skill> skills = new ArrayList<>();
             while (resultSet.next()) {
-                skills.add(new Skill(resultSet.getString("skill_name"), resultSet.getInt("id")));
+                skills.add(new Skill(resultSet.getString("skill_name"), resultSet.getInt("skill_id")));
             }
             result.setSkills(skills);
-            resultSet = statement.executeQuery(querySpecialty);
+            resultSet = statement.executeQuery(querySpecialty + id);
             if (resultSet.first()) {
                 result.setSpecialty(new Specialty(
-                        resultSet.getInt("id"),
+                        resultSet.getInt("specialty_id"),
                         resultSet.getString("specialty_name")));
             }
 
@@ -60,17 +72,17 @@ public class JdbcDeveloperRepositoryImpl implements DeveloperRepository {
     public List<Developer> getAll() {
 
         String firstLastNameAndSpecialty = """
-                SELECT developer.id, first_name, last_name, specialty_name
+                SELECT developer.id, first_name, last_name, specialty_name, status
                 FROM developer
-                    LEFT JOIN developer_specialty ON developer.id = developer_specialty.developer_id
-                    LEFT JOIN specialty ON specialty.id = developer_specialty.specialty_id;
+                LEFT JOIN developer_specialty ON developer.id = developer_specialty.developer_id
+                LEFT JOIN specialty ON specialty.id = developer_specialty.specialty_id;
                 """;
         String skills = """
                 SELECT skill_name
                 FROM developer_skill
                 JOIN skill ON developer_skill.skill_id = skill.id
                 WHERE developer_id =
-                """;
+                        """;
         List<Developer> output = new ArrayList<>();
         try (var statement = factory.getConnection().createStatement()) {
             var resultSet = statement.executeQuery(firstLastNameAndSpecialty);
@@ -79,7 +91,8 @@ public class JdbcDeveloperRepositoryImpl implements DeveloperRepository {
                 String first_name = resultSet.getString("first_name");
                 String last_name = resultSet.getString("last_name");
                 String specialty_name = resultSet.getString("specialty_name");
-                output.add(Developer.of(id, first_name, last_name, specialty_name));
+                Status status = Status.valueOf(resultSet.getString("status"));
+                output.add(Developer.of(id, first_name, last_name, specialty_name, status));
             }
 
             for (Developer developer : output) {
@@ -100,6 +113,7 @@ public class JdbcDeveloperRepositoryImpl implements DeveloperRepository {
 
     @Override
     public Developer save(Developer developer) {
+
         int developerId = saveFirstAndLastName(developer.getFirstName(), developer.getLastName());
         if (developerId == -1) {
             throw new AssertionError("Cannot save developer");
@@ -111,12 +125,29 @@ public class JdbcDeveloperRepositoryImpl implements DeveloperRepository {
 
     @Override
     public Developer update(Developer developer) {
-        return null;
+
+        if (developer == null || developer.getId() == null) {
+            throw new IllegalArgumentException("Developer or developer id cannot be null.");
+        }
+
+        save(developer);
+        return getById(developer.getId());
     }
 
     @Override
-    public void deleteById(Integer integer) {
+    public void deleteById(Integer id) {
 
+        if (id == null) {
+            throw new IllegalArgumentException(Messages.CANNOT_BE_NULL.toString());
+        }
+
+        String query = "UPDATE developer SET status = 'DELETED' WHERE id = ";
+        try (var connection = factory.getConnection();
+             var statement = connection.createStatement()) {
+            statement.execute(query + id);
+        } catch (SQLException exception) {
+            LOGGER.error("SQL Error", exception);
+        }
     }
 
     private static int saveFirstAndLastName(String firstName, String lastName) {

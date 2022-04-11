@@ -16,19 +16,17 @@ public class SpecialtyView {
             System.out.print("Input Specialty: ");
             result = controller.save(new Specialty(scanner.nextLine()));
         } else {
-            for (String item : controller.printItemsWithIndex(controller.getAllSpecialties())) {
-                System.out.println(item);
-            }
+            controller.getAllSpecialtyWithId().forEach(System.out::println);
             System.out.print("The above list of available specialties, enter a number or type a new one to add it: ");
             String inputFromUser = scanner.nextLine(); //FIXME it does not work (((
-            inputFromUser = scanner.nextLine();
+//            inputFromUser = scanner.nextLine();
             if (utils.isStringContainsOnlyNumbers(inputFromUser)) {
                 result = controller.getById(Integer.valueOf(inputFromUser));
             } else {
                 result = controller.save(new Specialty(inputFromUser));
             }
         }
-        System.out.println(result);
+//        System.out.println(result);
         return result;
     }
 
