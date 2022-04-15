@@ -16,11 +16,11 @@
         <maven.compiler.target>17</maven.compiler.target>
         <gson.version>2.9.0</gson.version>
         <junit.version>5.8.2</junit.version>
-        <liquibase.version>4.9.1</liquibase.version>
         <postgresql.version>42.3.3</postgresql.version>
         <logback.version>1.2.11</logback.version>
         <mockito.version>4.4.0</mockito.version>
         <assertj.version>3.22.0</assertj.version>
+        <flyway.version>8.5.7</flyway.version>
     </properties>
 
     <dependencies>
@@ -36,12 +36,6 @@
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
             <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-            <version>${liquibase.version}</version>
         </dependency>
 
         <dependency>
@@ -64,7 +58,6 @@
             <version>${assertj.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -76,11 +69,13 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <version>4.9.0</version>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>${flyway.version}</version>
                 <configuration>
-                    <propertyFile>src/main/resources/application.properties</propertyFile>
+                    <configFiles>
+                        <configFile>src/main/resources/flyway.conf</configFile>
+                    </configFiles>
                 </configuration>
             </plugin>
         </plugins>
