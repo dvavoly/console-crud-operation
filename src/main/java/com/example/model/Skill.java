@@ -1,6 +1,6 @@
 package com.example.model;
 
-public class Skill implements Entity {
+public class Skill {
     private Integer id;
     private String name;
 

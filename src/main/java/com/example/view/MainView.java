@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class MainView {
 
-    DeveloperView developer = new DeveloperView();
+    DeveloperView developerView = new DeveloperView();
 
     public void showMainMenu() {
         boolean showMenu = true;
@@ -17,10 +17,10 @@ public class MainView {
                 System.out.println(Messages.MAINMENU);
                 switch (scanner.nextInt()) {
                     case 0 -> showMenu = false; // exit from loop and program
-                    case 1 -> developer.createDeveloper(scanner);
-                    case 2 -> developer.listAllDevelopers();
-                    case 3 -> developer.updateDeveloper(scanner);
-                    case 4 -> developer.deleteDeveloper(scanner);
+                    case 1 -> developerView.createDeveloper(scanner);
+                    case 2 -> developerView.listAllDevelopers();
+                    case 3 -> developerView.updateDeveloper(scanner);
+                    case 4 -> developerView.deleteDeveloper(scanner);
                     default -> System.out.println(Messages.BAD_INPUT);
                 }
             }

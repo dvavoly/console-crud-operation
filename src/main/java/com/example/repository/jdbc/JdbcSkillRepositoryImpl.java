@@ -2,27 +2,32 @@ package com.example.repository.jdbc;
 
 import com.example.model.Skill;
 import com.example.repository.SkillRepository;
+import com.example.utils.JdbcUtils;
 import com.example.utils.Messages;
+import com.example.utils.SqlQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcSkillRepositoryImpl implements SkillRepository {
 
-    private final DatasourceFactory factory = new DatasourceFactory();
     Logger LOGGER = LoggerFactory.getLogger(JdbcSkillRepositoryImpl.class);
 
     @Override
     public Skill getById(Integer id) {
-        String query = "SELECT id, skill_name FROM skill WHERE id = " + id;
-        try (var statement = factory.getConnection().createStatement()) {
-            var resultSet = statement.executeQuery(query);
-            while (resultSet.next()) {
+
+        if (id == null) {
+            throw new IllegalArgumentException(Messages.CANNOT_BE_NULL.toString());
+        }
+
+        try (var statement = JdbcUtils.getPreparedStatement(SqlQuery.getSkillById.toString())) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
                 return new Skill(
                         resultSet.getString("skill_name"),
                         resultSet.getInt("id"));
@@ -35,12 +40,13 @@ public class JdbcSkillRepositoryImpl implements SkillRepository {
 
     @Override
     public List<Skill> getAll() {
-        String query = "SELECT id, skill_name FROM skill";
         List<Skill> result = new ArrayList<>();
-        try (Statement statement = factory.getConnection().createStatement()) {
-            ResultSet resultSet = statement.executeQuery(query);
+        try (var statement = JdbcUtils.getConnection().createStatement()) {
+            ResultSet resultSet = statement.executeQuery(SqlQuery.getAllSkill.toString());
             while (resultSet.next()) {
-                result.add(new Skill(resultSet.getString("skill_name"), resultSet.getInt("id")));
+                result.add(new Skill(
+                        resultSet.getString("skill_name"),
+                        resultSet.getInt("id")));
             }
         } catch (SQLException exception) {
             LOGGER.error("SQL Error: ", exception);
@@ -50,17 +56,17 @@ public class JdbcSkillRepositoryImpl implements SkillRepository {
 
     @Override
     public Skill save(Skill skill) {
-        String queryInsert = "INSERT INTO skill(skill_name) VALUES ('" + skill.getName() + "')";
-        String getLastId = "SELECT id, skill_name FROM skill ORDER BY id DESC LIMIT 1";
-        try (var statement = factory.getConnection().createStatement()) {
-            statement.execute(queryInsert);
-            ResultSet resultSet = statement.executeQuery(getLastId);
-//             if (resultSet.first()) {
-//                return new Skill(
-//                        resultSet.getString("skill_name"),
-//                        resultSet.getInt("id"));
-//            }
-            while (resultSet.next()) {
+
+        if (skill.getName() == null) {
+            throw new IllegalArgumentException("Skill name cannot be null.");
+        }
+
+        try (var statement = JdbcUtils.getPreparedStatement(SqlQuery.insertSkill.toString());
+             var getSkill = JdbcUtils.getConnection().createStatement()) {
+            statement.setString(1, skill.getName());
+            statement.execute();
+            ResultSet resultSet = getSkill.executeQuery(SqlQuery.getLastSkill.toString());
+            if (resultSet.next()) {
                 return new Skill(
                         resultSet.getString("skill_name"),
                         resultSet.getInt("id"));
@@ -73,12 +79,15 @@ public class JdbcSkillRepositoryImpl implements SkillRepository {
 
     @Override
     public Skill update(Skill skill) {
-        if (skill.getId() == null) {
+
+        if (skill.getId() == null && skill.getName() == null) {
             throw new IllegalArgumentException(Messages.CANNOT_BE_NULL.toString());
         }
-        String query = "UPDATE skill SET skill_name = '" + skill.getName() + "' WHERE id = " + skill.getId();
-        try (var statement = factory.getConnection().createStatement()) {
-            statement.execute(query);
+
+        try (var statement = JdbcUtils.getPreparedStatement(SqlQuery.updateSkill.toString())) {
+            statement.setString(1, skill.getName());
+            statement.setInt(2, skill.getId());
+            statement.execute();
         } catch (SQLException exception) {
             LOGGER.error("SQL Error: ", exception);
         }
@@ -87,12 +96,13 @@ public class JdbcSkillRepositoryImpl implements SkillRepository {
 
     @Override
     public void deleteById(Integer id) {
+
         if (id == null) {
             throw new IllegalArgumentException(Messages.CANNOT_BE_NULL.toString());
         }
-        String query = "DELETE FROM skill WHERE id = " + id;
-        try (var statement = factory.getConnection().createStatement()) {
-            statement.execute(query);
+
+        try (var statement = JdbcUtils.getPreparedStatement(SqlQuery.deleteSkill.toString())) {
+            statement.execute();
         } catch (SQLException exception) {
             LOGGER.error("SQL Error: ", exception);
         }

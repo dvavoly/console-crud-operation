@@ -7,8 +7,8 @@ import java.util.Scanner;
 
 import com.example.controller.SkillController;
 import com.example.model.Skill;
+import com.example.utils.IOUtils;
 import com.example.utils.Messages;
-import com.example.utils.utils;
 
 public class SkillView {
 
@@ -30,13 +30,13 @@ public class SkillView {
                 addAndSaveNewSkills(scanner);
             }
             System.out.println("Find some skills:");
-            controller.printItemsWithIndex(controller.getAllSkills())
+            controller.skillService.printItemsWithIndex(controller.getAllSkills())
                     .forEach(System.out::println);
             System.out.println("Which one do you want to add?\nEnter numbers separated by spaces:");
             String listOfAllSkills = scanner.nextLine(); // FIXME add input validation
-//            listOfAllSkills = scanner.nextLine();
-            if (utils.isStringContainsOnlyNumbers(listOfAllSkills)) {
-                result = SkillController.createListOfSkillFromStringOfId(listOfAllSkills);
+            listOfAllSkills = scanner.nextLine();
+            if (IOUtils.isStringContainsOnlyNumbers(listOfAllSkills)) {
+                result = controller.skillService.createListOfSkillFromStringOfId(listOfAllSkills);
             }
             System.out.println("You add this skill:");
             result.forEach(System.out::println);

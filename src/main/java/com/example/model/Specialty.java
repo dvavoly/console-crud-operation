@@ -1,6 +1,6 @@
 package com.example.model;
 
-public class Specialty implements Entity{
+public class Specialty {
     private Integer id;
     private String name;
 

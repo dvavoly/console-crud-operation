@@ -5,6 +5,7 @@ import com.example.model.Skill;
 import com.example.model.Specialty;
 import com.example.model.Status;
 import com.example.repository.DeveloperRepository;
+import com.example.utils.JdbcUtils;
 import com.example.utils.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +15,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.utils.JdbcUtils.getPreparedStatement;
+import static com.example.utils.SqlQuery.*;
+import static com.example.utils.SqlQuery.getAllDevelopers;
+
 public class JdbcDeveloperRepositoryImpl implements DeveloperRepository {
 
-    private final static DatasourceFactory factory = new DatasourceFactory();
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcDeveloperRepositoryImpl.class);
 
     @Override
@@ -27,41 +31,31 @@ public class JdbcDeveloperRepositoryImpl implements DeveloperRepository {
         }
 
         Developer result = Developer.of();
-        String queryDeveloper = "SELECT id, first_name, last_name FROM developer WHERE developer.id = ";
-        String querySkills = """
-                SELECT skill_id, skill_name
-                FROM developer_skill
-                JOIN skill s on developer_skill.skill_id = s.id
-                WHERE developer_id =
-                """;
-        String querySpecialty = """
-                SELECT specialty_id, specialty_name
-                FROM specialty
-                JOIN developer_specialty ds on specialty.id = ds.specialty_id
-                WHERE developer_id =
-                """;
 
-        try (var statement = factory.getConnection().createStatement(
-                ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
-            ResultSet resultSet = statement.executeQuery(queryDeveloper + id);
-            if (resultSet.first()) {
+        try (var statement = getPreparedStatement(getDeveloperById.toString())) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
                 result.setId(resultSet.getInt("id"));
                 result.setFirstName(resultSet.getString("first_name"));
                 result.setLastName(resultSet.getString("last_name"));
+                result.setStatus(Status.valueOf(resultSet.getString("status")));
+                result.setSpecialty(new Specialty(
+                        resultSet.getInt("specialty_id"),
+                        resultSet.getString("specialty_name")));
             }
-            resultSet = statement.executeQuery(querySkills + id);
+        } catch (SQLException exception) {
+            LOGGER.error("SQL Error", exception);
+        }
+
+        try (var statement = getPreparedStatement(getSkillsByDeveloperId.toString())) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
             List<Skill> skills = new ArrayList<>();
             while (resultSet.next()) {
                 skills.add(new Skill(resultSet.getString("skill_name"), resultSet.getInt("skill_id")));
             }
             result.setSkills(skills);
-            resultSet = statement.executeQuery(querySpecialty + id);
-            if (resultSet.first()) {
-                result.setSpecialty(new Specialty(
-                        resultSet.getInt("specialty_id"),
-                        resultSet.getString("specialty_name")));
-            }
-
         } catch (SQLException exception) {
             LOGGER.error("SQL Error", exception);
         }
@@ -70,22 +64,10 @@ public class JdbcDeveloperRepositoryImpl implements DeveloperRepository {
 
     @Override
     public List<Developer> getAll() {
-
-        String firstLastNameAndSpecialty = """
-                SELECT developer.id, first_name, last_name, specialty_name, status
-                FROM developer
-                LEFT JOIN developer_specialty ON developer.id = developer_specialty.developer_id
-                LEFT JOIN specialty ON specialty.id = developer_specialty.specialty_id;
-                """;
-        String skills = """
-                SELECT skill_name
-                FROM developer_skill
-                JOIN skill ON developer_skill.skill_id = skill.id
-                WHERE developer_id =
-                        """;
         List<Developer> output = new ArrayList<>();
-        try (var statement = factory.getConnection().createStatement()) {
-            var resultSet = statement.executeQuery(firstLastNameAndSpecialty);
+        try (var getAll = getPreparedStatement(getAllDevelopers.toString());
+             var getSkill = getPreparedStatement(getSkillByDeveloperId.toString())) {
+            var resultSet = getAll.executeQuery();
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String first_name = resultSet.getString("first_name");
@@ -97,9 +79,12 @@ public class JdbcDeveloperRepositoryImpl implements DeveloperRepository {
 
             for (Developer developer : output) {
                 List<Skill> skillList = new ArrayList<>();
-                ResultSet skillListSet = statement.executeQuery(skills + developer.getId());
-                while (skillListSet.next()) {
-                    skillList.add(new Skill(skillListSet.getString("skill_name")));
+                getSkill.setInt(1, developer.getId());
+                ResultSet resultSkillSet = getSkill.executeQuery();
+                while (resultSkillSet.next()) {
+                    skillList.add(new Skill(
+                            resultSkillSet.getString("skill_name"),
+                            resultSkillSet.getInt("skill_id")));
                 }
                 developer.setSkills(skillList);
             }
@@ -116,7 +101,7 @@ public class JdbcDeveloperRepositoryImpl implements DeveloperRepository {
 
         int developerId = saveFirstAndLastName(developer.getFirstName(), developer.getLastName());
         if (developerId == -1) {
-            throw new AssertionError("Cannot save developer");
+            throw new AssertionError("Unable to save developer");
         }
         saveSpecialty(developer.getSpecialty(), developerId);
         saveSkills(developer.getSkills(), developerId);
@@ -141,10 +126,9 @@ public class JdbcDeveloperRepositoryImpl implements DeveloperRepository {
             throw new IllegalArgumentException(Messages.CANNOT_BE_NULL.toString());
         }
 
-        String query = "UPDATE developer SET status = 'DELETED' WHERE id = ";
-        try (var connection = factory.getConnection();
-             var statement = connection.createStatement()) {
-            statement.execute(query + id);
+        try (var statement = JdbcUtils.getPreparedStatement(deleteDeveloperById.toString())) {
+            statement.setInt(1, id);
+            statement.execute();
         } catch (SQLException exception) {
             LOGGER.error("SQL Error", exception);
         }
@@ -155,16 +139,13 @@ public class JdbcDeveloperRepositoryImpl implements DeveloperRepository {
         if (firstName == null || lastName == null) {
             throw new IllegalArgumentException("Developer's first or last name cannot be null.");
         }
-
-        String queryCreateDeveloper =
-                "INSERT INTO developer(first_name, last_name) VALUES ('" + firstName + "', '" + lastName + "')";
-
-        String queryGetLastId = "SELECT id FROM developer ORDER BY id DESC LIMIT 1;";
-
-        try (var statement = factory.getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
-            statement.execute(queryCreateDeveloper);
-            ResultSet resultSet = statement.executeQuery(queryGetLastId);
-            if (resultSet.first()) {
+        try (var preparedStatement = JdbcUtils.getPreparedStatement(insertDeveloper.toString());
+             var statement = JdbcUtils.getConnection().createStatement()) {
+            preparedStatement.setString(1, firstName);
+            preparedStatement.setString(2, lastName);
+            preparedStatement.execute();
+            ResultSet resultSet = statement.executeQuery(getLastDeveloperId.toString());
+            if (resultSet.next()) {
                 return resultSet.getInt("id");
             }
         } catch (SQLException exception) {
@@ -174,24 +155,26 @@ public class JdbcDeveloperRepositoryImpl implements DeveloperRepository {
     }
 
     private static void saveSpecialty(Specialty specialty, int developerId) {
-        String queryGetIdOfSpecialty = "SELECT id FROM specialty WHERE specialty_name = '" + specialty.getName() + "'";
         int specialtyId;
-        try (var statement = factory.getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
-            ResultSet resultSet = statement.executeQuery(queryGetIdOfSpecialty);
-            if (resultSet.first()) {
+        try (var statement = JdbcUtils.getPreparedStatement(getSpecialtyId.toString());
+             var insetDev = JdbcUtils.getPreparedStatement(insertDeveloperSpecialty.toString())) {
+            statement.setString(1, specialty.getName());
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
                 specialtyId = resultSet.getInt("id");
             } else {
                 throw new IllegalArgumentException("Cannot find a specialty, need to create one first.");
             }
-            statement.execute("INSERT INTO developer_specialty VALUES ('" + developerId + "', '" + specialtyId + "')");
+            insetDev.setInt(1, developerId);
+            insetDev.setInt(2, specialtyId);
+            insetDev.executeUpdate();
         } catch (SQLException exception) {
             LOGGER.error("SQL Error", exception);
         }
     }
 
     private static void saveSkills(List<Skill> skills, int developerId) {
-        String query = "INSERT INTO developer_skill(developer_id, skill_id) VALUES( ?, ?)";
-        try (var preparedStatement = factory.getConnection().prepareStatement(query)) {
+        try (var preparedStatement = JdbcUtils.getPreparedStatement(insertDeveloperSkill.toString())) {
             for (Skill item : skills) {
                 preparedStatement.setInt(1, developerId);
                 preparedStatement.setInt(2, item.getId());

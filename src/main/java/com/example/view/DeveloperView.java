@@ -54,19 +54,19 @@ public class DeveloperView {
                     String firstName = scanner.nextLine();
                     System.out.print("Input Last name: ");
                     String lastName = scanner.nextLine();
-                    System.out.println(controller.updateFirstAndLastName(developer, firstName, lastName));
+                    System.out.println(controller.developerService.updateFirstAndLastName(developer, firstName, lastName, controller));
                 }
                 case 2 -> {
                     System.out.println("Update Skills");
                     scanner.nextLine();
                     List<Skill> skills = skillView.createSkill(scanner);
-                    controller.updateSkills(developer, skills);
+                    controller.developerService.updateSkills(developer, skills, controller);
                 }
                 case 3 -> {
                     System.out.println("Update Specialty");
                     scanner.nextLine();
                     Specialty specialty = specialtyView.createSpecialty(scanner);
-                    controller.updateSpecialty(developer, specialty);
+                    controller.developerService.updateSpecialty(developer, specialty, controller);
                 }
                 case 4 -> {
                     return;
